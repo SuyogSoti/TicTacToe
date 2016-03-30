@@ -39,6 +39,7 @@ public class TicTacToe {
         Panel[] panel = new Panel[9];
         for(int i = 0; i<panel.length; i++){
             panel[i] = new Panel();
+            panel[i].setBackground(Color.white);
         }
     }
     

@@ -59,7 +59,7 @@ public class MousePlay {
             //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             Object source = me.getSource();
             TicTacToe.Panel panel = (TicTacToe.Panel) source;
-            if(panel.getBackground() != Color.green && panel.getBackground() != Color.red){
+            if(panel.getBackground() == Color.white){
                 panel.setBackground(Color.yellow);
             }
         }
@@ -80,8 +80,8 @@ public class MousePlay {
             */
             int counter = 0;
             int[][] z = new int[3][3];
-            for(int i = 0; i < 3; i++){
-                for(int x = 0; x < 3; x++){
+            for(int i = 0; i < z.length; i++){
+                for(int x = 0; x < z.length; x++){
                     TicTacToe.Panel s = (TicTacToe.Panel) TicTacToe.mainFrame.getContentPane().getComponent(counter);
                     if(s.getBackground() == Color.red){
                         z[i][x] = 1;
@@ -161,8 +161,8 @@ public class MousePlay {
         }
         //computer decides to play on this one
         private static void comChose(int[][] arr){
-            /*if (closeWin() > 0) {
-                JPanel p = (JPanel) TicTacToe.mainFrame.getContentPane().getComponent(closeWin());
+            /*if (closeWinRow() > 0) {
+                JPanel p = (JPanel) TicTacToe.mainFrame.getContentPane().getComponent(closeWinRow());
                 p.setBackground(Color.green);
                 TicTacToe.turn++;
             }
@@ -200,22 +200,118 @@ public class MousePlay {
                     TicTacToe.turn++;
                 }
             }else {
-                if (closeWin() == 0){
+                TicTacToe.Panel compPanel;
+                if (closeWinRow(check()) > -1){
+//                    System.out.println("This is Row: " + closeWinRow(check()));
+                    int row = closeWinRow(check());
+                    int end = (row + 1) * 3;
+                    int begin = end - 3;
+                    for (int i = begin; i < end; i++) {
+                        compPanel = (TicTacToe.Panel) TicTacToe.mainFrame.getContentPane().getComponent(i);
+                        if (compPanel.getBackground() == Color.white){
+                            compPanel.setBackground(Color.green);
+                            compPanel.color = compPanel.getBackground();
+                            TicTacToe.turn++;
+                            break;
+                        }
+                    }
+                }else if (closeWinCol(check()) > -1){
+                    int col = closeWinCol(check());
+                    for (int i = col; i < 9; i += 3) {
+                        System.out.println(i);
+                        compPanel = (TicTacToe.Panel) TicTacToe.mainFrame.getContentPane().getComponent(i);
+                        if (compPanel.getBackground() == Color.white){
+                            compPanel.setBackground(Color.green);
+                            compPanel.color = compPanel.getBackground();
+                            TicTacToe.turn++;
+                            break;
+                        }
+                    }
+                }else if (closeWinDiagonals(check()) > 0){
+                    int diagonal = closeWinDiagonals(check());
+                    if (diagonal == 0){
+                        for (int i = 0; i < 9; i+=4) {
+                            compPanel = (TicTacToe.Panel) TicTacToe.mainFrame.getContentPane().getComponent(i);
+                            if (compPanel.getBackground() == Color.white){
+                                compPanel.setBackground(Color.green);
+                                compPanel.color = compPanel.getBackground();
+                                TicTacToe.turn++;
+                                break;
+                            }
+                        }
+                    }else if(diagonal == 1){
+                        for (int i = 2; i < 8; i+=2) {
+                            compPanel = (TicTacToe.Panel) TicTacToe.mainFrame.getContentPane().getComponent(i);
+                            if (compPanel.getBackground() == Color.white){
+                                compPanel.setBackground(Color.green);
+                                compPanel.color = compPanel.getBackground();
+                                TicTacToe.turn++;
+                                break;
+                            }
+                        }
+                    }
+                    System.out.println("This is diagonal: " + closeWinDiagonals(check()));
                 }
             }
         }
         //to help the computer play, this will tell the computer which way the opp is about to win
-        private static int closeWin(){
-            int counter = 0;
-            for (int i = 0; i < 3; i++) {
-                for (int z = 0; z < 3; z++) {
-                    TicTacToe.Panel p = (TicTacToe.Panel) TicTacToe.mainFrame.getContentPane().getComponent(counter);
-                    counter++;
-                    if(z%2 == 0){
+        private static int closeWinRow(int arr[][]){
+            for (int i = 0; i < arr[0].length; i++) {
+                int countRow = 0;
+                for (int j = 0; j < arr[0].length; j++) {
+                    if (arr[i][j] == 1){
+                        countRow++;
+                    }else if(arr[i][j] == 2){
+                        countRow--;
+                    }
+                }
+                if (countRow == 2){
+                    return i;
+                }
+            }
+            return -1;
+        }
+        private static int closeWinCol(int arr[][]){
+            for (int j = 0; j < arr.length; j++) {
+                int countCol = 0;
+                for (int[] anArr : arr) {
+                    if (anArr[j] == 1) {
+                        countCol++;
+                    }else if(anArr[j] == 2)
+                        countCol--;
+                    if (countCol == 2) {
+                        return j;
                     }
                 }
             }
-            return 0;
+            return -1;
+        }
+        private static int closeWinDiagonals(int arr[][]){
+            int diagnoal = 0;
+            for (int i = 0; i < arr.length; i++) {
+                if (arr[i][i] == 1)
+                    diagnoal++;
+                else if(arr[i][i] == 2)
+                    diagnoal--;
+            }
+            if (diagnoal == 2)
+                return 0;
+            diagnoal = 0;
+            if (arr[0][2] == 1)
+                diagnoal++;
+            else if(arr[0][2] == 2)
+                diagnoal--;
+            if (arr[1][1] == 1)
+                diagnoal++;
+            else if(arr[1][1] == 2)
+                diagnoal--;
+            if (arr[2][0] == 1)
+                diagnoal++;
+            else if(arr[2][0] == 2)
+                diagnoal--;
+            if (diagnoal == 2)
+                return 1;
+            return -1;
         }
     }
 }
